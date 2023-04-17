@@ -1,24 +1,42 @@
 def bellman_ford(graph, start):
-    distances = {node: float('inf') for node in graph}
-    distances[start] = 0
+    distance = {}
+    predecessor = {}
+
+    for node in graph:
+        distance[node] = float('inf')
+        predecessor[node] = None
+
+    distance[start] = 0
 
     for _ in range(len(graph) - 1):
         for node in graph:
             for neighbor, weight in graph[node].items():
-                if distances[node] + weight < distances[neighbor]:
-                    distances[neighbor] = distances[node] + weight
+                new_distance = distance[node] + weight
+                if new_distance < distance[neighbor]:
+                    distance[neighbor] = new_distance
+                    predecessor[neighbor] = node
 
     for node in graph:
         for neighbor, weight in graph[node].items():
-            if distances[node] + weight < distances[neighbor]:
-                raise ValueError("Negative weight cycle detected")
+            if distance[node] + weight < distance[neighbor]:
+                raise ValueError("Negative cycle detected")
 
-    return distances
+    return distance, predecessor
+
+def get_shortest_path(graph, start, end):
+    distance, predecessor = bellman_ford(graph, start)
+
+    path = [end]
+    while path[-1] != start:
+        path.append(predecessor[path[-1]])
+    path.reverse()
+
+    return path, distance[end]
 
 graph = {
     'START': {'A': 67, 'B': 120},
     'A': {'B': 102, 'J': 260},
-    'B': {'D':16, 'E': 52},
+    'B': {'D': 16, 'E': 52},
     'C': {'O': 68, 'L': 49},
     'D': {'F': 52},
     'E': {'F': 19, 'G': 16},
@@ -34,7 +52,7 @@ graph = {
     'O': {'R': 37},
     'P': {'Q': 110},
     'Q': {'V': 11},
-    'R': {'Q': 67, 'S':55},
+    'R': {'Q': 67, 'S': 55},
     'S': {'U': 60},
     'T': {'END': 55},
     'U': {'END': 7},
@@ -43,5 +61,6 @@ graph = {
     'END': {}
 }
 
-distances = bellman_ford(graph, 'START')
-print(distances)
+path, distance = get_shortest_path(graph, 'START', 'END')
+print("Shortest path:", path)
+print("Shortest path distance:", distance)
