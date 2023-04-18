@@ -8,6 +8,8 @@ def dijkstra(graph, start, end):
     
     priority_queue = [(0, start)]
     
+    table = []
+    
     while len(priority_queue) > 0:
         current_distance, current_vertex = heapq.heappop(priority_queue)
         
@@ -17,7 +19,7 @@ def dijkstra(graph, start, end):
                 path.insert(0, current_vertex)
                 current_vertex = previous_vertices[current_vertex]
             path.insert(0, start)
-            return (distances[end], path)
+            return (distances[end], path, table)
         
         for neighbor, weight in graph[current_vertex].items():
             distance = current_distance + weight
@@ -26,6 +28,14 @@ def dijkstra(graph, start, end):
                 distances[neighbor] = distance
                 previous_vertices[neighbor] = current_vertex
                 heapq.heappush(priority_queue, (distance, neighbor))
+        
+        # Append current step information to the table
+        table.append({
+            'Vertex': current_vertex,
+            'Distance': current_distance,
+            'Neighbors': graph[current_vertex],
+            'Distances': distances
+        })
     
     return None
 
@@ -56,6 +66,15 @@ graph = {
     'W': {'T': 10},
     'END': {}
 }
-distance, path = dijkstra(graph, 'START', 'END')
-print(f"Shortest distance: {distance}")
-print(f"Shortest path: {' -> '.join(path)}")
+
+distance, path, table = dijkstra(graph, 'START', 'END')
+
+# Print the calculation table
+print("Calculation Table:")
+print("Vertex\tDistance\tNeighbors\tDistances")
+for row in table:
+    print(f"{row['Vertex']}\t{row['Distance']}\t\t{row['Neighbors']}\t\t{row['Distances']}")
+
+# Print the shortest distance and path
+print(f"\nShortest Distance: {distance}")
+print(f"Shortest Path: {' -> '.join(path)}")
