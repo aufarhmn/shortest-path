@@ -1,4 +1,5 @@
 import heapq
+import pandas as pd
 
 def dijkstra(graph, start, end):
     distances = {vertex: float('inf') for vertex in graph}
@@ -29,12 +30,11 @@ def dijkstra(graph, start, end):
                 previous_vertices[neighbor] = current_vertex
                 heapq.heappush(priority_queue, (distance, neighbor))
         
-        # Append current step information to the table
         table.append({
             'Vertex': current_vertex,
             'Distance': current_distance,
             'Neighbors': graph[current_vertex],
-            'Distances': distances
+            'Distances': distances.copy()  # Make a copy to avoid reference
         })
     
     return None
@@ -69,12 +69,9 @@ graph = {
 
 distance, path, table = dijkstra(graph, 'START', 'END')
 
-# Print the calculation table
-print("Calculation Table:")
-print("Vertex\tDistance\tNeighbors\tDistances")
-for row in table:
-    print(f"{row['Vertex']}\t{row['Distance']}\t\t{row['Neighbors']}\t\t{row['Distances']}")
-
-# Print the shortest distance and path
 print(f"\nShortest Distance: {distance}")
 print(f"Shortest Path: {' -> '.join(path)}")
+
+df = pd.DataFrame(table)
+
+df.to_excel('Djikstra Calculation.xlsx', index=False)
