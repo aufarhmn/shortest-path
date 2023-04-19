@@ -1,3 +1,5 @@
+# Algoritma Bellman-Ford
+# Membuat fungsi untuk mengimplementasikan algoritma Bellman-Ford
 def bellman_ford(graph, start):
     distance = {}
     predecessor = {}
@@ -8,13 +10,14 @@ def bellman_ford(graph, start):
 
     distance[start] = 0
 
-    for _ in range(len(graph) - 1):
+    for i in range(len(graph) - 1):
         for node in graph:
             for neighbor, weight in graph[node].items():
                 new_distance = distance[node] + weight
                 if new_distance < distance[neighbor]:
                     distance[neighbor] = new_distance
                     predecessor[neighbor] = node
+        print_calculation_table(graph, distance, predecessor, i-1)
 
     for node in graph:
         for neighbor, weight in graph[node].items():
@@ -23,6 +26,17 @@ def bellman_ford(graph, start):
 
     return distance, predecessor
 
+# Menampilkan tabel perhitungan pada setiap iterasi
+def print_calculation_table(graph, distance, predecessor, iteration):
+    print(f"Iteration {iteration + 1}:")
+    print("Node\tDistance\tPredecessor")
+    for node in graph:
+        dist = distance[node]
+        pred = predecessor[node]
+        print(f"{node}\t{dist}\t\t{pred}")
+    print()
+
+# Menampilkan jalur terpendek
 def get_shortest_path(graph, start, end):
     distance, predecessor = bellman_ford(graph, start)
 
@@ -33,6 +47,7 @@ def get_shortest_path(graph, start, end):
 
     return path, distance[end]
 
+# Graf rute dari DTETI ke Malioboro Mall
 graph = {
     'START': {'A': 67, 'B': 120},
     'A': {'B': 102, 'J': 260},
@@ -61,6 +76,9 @@ graph = {
     'END': {}
 }
 
+# Memanggil fungsi yang sudah kita buat di atas
 path, distance = get_shortest_path(graph, 'START', 'END')
+print("============================================================================")
 print("Shortest path:", path)
 print("Shortest path distance:", distance)
+print("============================================================================\n")

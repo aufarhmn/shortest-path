@@ -1,6 +1,8 @@
+# Algoritma Djikstra
 import heapq
 import pandas as pd
 
+# Membuat fungsi untuk implementasi agoritma Djikstra
 def dijkstra(graph, start, end):
     distances = {vertex: float('inf') for vertex in graph}
     distances[start] = 0
@@ -30,6 +32,7 @@ def dijkstra(graph, start, end):
                 previous_vertices[neighbor] = current_vertex
                 heapq.heappush(priority_queue, (distance, neighbor))
         
+        # Menambahkan data ke tabel
         table.append({
             'Vertex': current_vertex,
             'Distance': current_distance,
@@ -39,6 +42,7 @@ def dijkstra(graph, start, end):
     
     return None
 
+# Graf rute dari DTETI ke Malioboro Mall
 graph = {
     'START': {'A': 67, 'B': 120},
     'A': {'B': 102, 'J': 260},
@@ -67,11 +71,11 @@ graph = {
     'END': {}
 }
 
+# Memanggil fungsi yang sudah kita buat di atas
 distance, path, table = dijkstra(graph, 'START', 'END')
-
 print(f"\nShortest Distance: {distance}")
 print(f"Shortest Path: {' -> '.join(path)}")
 
+#  Menyimpan tabel ke dalam file excel
 df = pd.DataFrame(table)
-
 df.to_excel('Djikstra Calculation.xlsx', index=False)

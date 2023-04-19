@@ -1,5 +1,7 @@
+# Algoritma Ant Colony
 import random
 
+# Membuat class dan fungsi untuk mengimplementasikan algoritma Ant Colony
 class AntColony:
     def __init__(self, graph, n_ants, n_iterations, evaporation_rate, alpha, beta):
         self.graph = graph
@@ -10,20 +12,23 @@ class AntColony:
         self.beta = beta
         self.pheromones = {(node, edge): 1 for node in graph for edge in graph[node]}
 
+    # Fungsi untuk mencari jalur terpendek
     def find_shortest_path(self, start, end):
         best_path = None
         best_distance = float('inf')
 
-        for _ in range(self.n_iterations):
+        for i in range(self.n_iterations):
             ants_paths = [self.ant_walk(start, end) for _ in range(self.n_ants)]
             for path, distance in ants_paths:
                 if distance < best_distance:
                     best_distance = distance
                     best_path = path
             self.update_pheromones(ants_paths)
+            self.print_calculation_table(i)
 
         return best_path, best_distance
 
+    # Fungsi untuk mencari jalur yang dilalui oleh semut
     def ant_walk(self, start, end):
         path = [start]
         distance = 0
@@ -44,6 +49,7 @@ class AntColony:
 
         return path, distance
 
+    # Fungsi untuk mengupdate pheromone
     def update_pheromones(self, ants_paths):
         for node in self.graph:
             for edge in self.graph[node]:
@@ -53,6 +59,15 @@ class AntColony:
             for i in range(len(path) - 1):
                 self.pheromones[(path[i], path[i + 1])] += 1 / distance
 
+    # Fungsi untuk menampilkan tabel perhitungan pada setiap iterasi
+    def print_calculation_table(self, iteration):
+        print(f"Iteration {iteration + 1}:")
+        print("Edge\t\tPheromone")
+        for node, edge in self.pheromones:
+            print(f"({node}, {edge})\t\t{self.pheromones[(node, edge)]:.5f}")
+        print()
+
+# Rute dari DTETI ke Malioboro Mall
 graph = {
     'START': {'A': 67, 'B': 120},
     'A': {'B': 102, 'J': 260},
@@ -81,7 +96,14 @@ graph = {
     'END': {}
 }
 
-ant_colony = AntColony(graph, n_ants=10, n_iterations=5000, evaporation_rate=0.1, alpha=1, beta=5)
+# Membuat objek AntColony dengan parameter yang diinginkan
+ant_colony = AntColony(graph, n_ants=10, n_iterations=100, evaporation_rate=0.1, alpha=1, beta=5)
+
+# Memanggil fungsi yang sudah kita buat di atas
 shortest_path, shortest_distance = ant_colony.find_shortest_path('START', 'END')
+
+# Menampilkan hasil
+print("============================================================================")
 print("Shortest path:", shortest_path)
 print("Shortest path distance:", shortest_distance)
+print("============================================================================\n")
