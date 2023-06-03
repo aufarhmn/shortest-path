@@ -1,5 +1,7 @@
 # Algoritma Ant Colony
 import random
+import networkx as nx
+import matplotlib.pyplot as plt
 
 # Membuat class dan fungsi untuk mengimplementasikan algoritma Ant Colony
 class AntColony:
@@ -67,6 +69,45 @@ class AntColony:
             print(f"({node}, {edge})\t\t{self.pheromones[(node, edge)]:.5f}")
         print()
 
+# Fungsi untuk membuat graph
+def plot_graph(graph, shortest_path):
+    # Membuat graph kosong terlebih dahulu
+    G = nx.Graph()
+
+    # Menambahkan node ke graph 
+    for node in graph:
+        G.add_node(node)
+
+    # Menambahkan edge ke graph
+    for node, edges in graph.items():
+        for neighbor, distance in edges.items():
+            G.add_edge(node, neighbor, weight=distance)
+
+    # Generate posisi node secara random dengan spring layout algorithm
+    pos = nx.spring_layout(G)
+
+    # Membuat figure baru
+    plt.figure(figsize=(10, 6))
+
+    # Menggambar graph
+    nx.draw_networkx_nodes(G, pos, node_size=500, node_color='lightblue')
+    nx.draw_networkx_edges(G, pos, edge_color='gray', width=1.5, alpha=0.8)
+
+    # Memberi label
+    nx.draw_networkx_labels(G, pos, font_size=8)
+
+    # Memberi warna berbeda jika node dilewati oleh jalur terpendek
+    node_colors = ['red' if node in shortest_path else 'lightblue' for node in G.nodes()]
+    nx.draw_networkx_nodes(G, pos, nodelist=G.nodes(), node_size=500, node_color=node_colors)
+
+    # Memberi label
+    labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=6)
+
+    # Menampilkan graph
+    plt.axis('equal')
+    plt.show()
+
 # Rute dari DTETI ke Malioboro Mall
 graph = {
     'START': {'A': 67, 'B': 120},
@@ -107,3 +148,6 @@ print("=========================================================================
 print("Shortest path:", shortest_path)
 print("Shortest path distance:", shortest_distance)
 print("============================================================================\n")
+
+# Menampilkan grafik
+plot_graph(graph, shortest_path)
